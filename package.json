@@ -1,0 +1,27 @@
+{
+  "name": "rest-api",
+  "version": "1.0.0",
+  "description": "REST API do Dashboard de estatísticas de frota. Projeto Integrado PUC Minas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/disilveira/api-projeto-integrado.git"
+  },
+  "keywords": [
+    "rest-api",
+    "node",
+    "puc-minas"
+  ],
+  "author": "Diego Silveira",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/disilveira/api-projeto-integrado/issues"
+  },
+  "homepage": "https://github.com/disilveira/api-projeto-integrado#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
