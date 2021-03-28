@@ -10,3 +10,4 @@ API desenvolvida para a disciplina de projeto integrado de aplicações da Unive
 - Express
 - Morgan
 - Mysql
+- Multer
