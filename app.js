@@ -3,7 +3,8 @@ const app = express();
 const morgan = require('morgan');
 
 const productsRoute = require('./routes/products.routes');
-const orderRoute = require('./routes/orders.routes');
+const ordersRoute = require('./routes/orders.routes');
+const usersRoute = require('./routes/users.routes');
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -26,7 +27,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/products', productsRoute);
-app.use('/orders', orderRoute);
+app.use('/orders', ordersRoute);
+app.use('/users', usersRoute);
 
 app.use((req, res, next) => {
     const erro = new Error('404 Route Not Found!');
