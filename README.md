@@ -12,3 +12,4 @@ API desenvolvida para a disciplina de projeto integrado de aplicações da Unive
 - Mysql
 - Multer
 - Bcrypt
+- Jwt

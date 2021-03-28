@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('../config/mysql').pool;
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -34,6 +35,45 @@ router.post('/signup', (req, res, next) => {
             });
         })
     });
-})
+});
+
+router.post('/signin', (req, res, next) => {
+    mysql.getConnection((error, conn) => {
+        if (error) { return res.status(500).send({ error: error }) }
+        const query = `SELECT * FROM users WHERE email = ?`
+        conn.query(query, [req.body.email], (error, row, fields) => {
+            conn.release();
+            if (error) { return res.status(500).send({ error: error }) }
+            if (row.length == 0) {
+                return res.status(401).send({ message: 'Unauthorized!' })
+            }
+
+            bcrypt.compare(req.body.password, row[0].password, (error, result) => {
+                if (error) {
+                    return res.status(401).send({ message: 'Unauthorized!' });
+                }
+
+                if (result) {
+                    const token = jwt.sign({
+                        user_id: row[0].user_id,
+                        email: row[0].email
+                    },
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: "8h"
+                    });
+                    return res.status(200).send({
+                        message: 'Authenticated!',
+                        token: token
+                    });
+                }
+
+                return res.status(401).send({ message: 'Unauthorized!' });
+
+            });
+
+        });
+    });
+});
 
 module.exports = router;
