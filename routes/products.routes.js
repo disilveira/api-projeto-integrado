@@ -14,7 +14,12 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage, 
+    limits: {
+        fileSize: 1024 * 1024 * 3
+    }
+});
 
 router.get('/', (req, res, next) => {
     mysql.getConnection((error, conn) => {
@@ -30,6 +35,7 @@ router.get('/', (req, res, next) => {
                             product_id: prod.product_id,
                             name: prod.name,
                             price: prod.price,
+                            product_image: prod.product_image,
                             request: {
                                 type: 'GET',
                                 description: 'Retorna os detalhes do produto',
@@ -45,21 +51,21 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', upload.single('product_image'), (req, res, next) => {
-    console.log(req.file);
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) }
         conn.query(
-            'INSERT INTO products (name, price) VALUES (?, ?)',
-            [req.body.name, req.body.price],
+            'INSERT INTO products (name, price, product_image) VALUES (?, ?, ?)',
+            [req.body.name, req.body.price, req.file.filename],
             (error, result, field) => {
                 conn.release();
                 if (error) { return res.status(500).send({ error: error }) }
                 const response = {
                     message: 'Product created!',
                     product: {
-                        product_id: result.product_id,
+                        product_id: result.insertId,
                         name: req.body.name,
                         price: req.body.price,
+                        product_image: req.file.filename,
                         request: {
                             type: 'GET',
                             description: 'Retorna todos os produtos',
@@ -91,6 +97,7 @@ router.get('/:product_id', (req, res, next) => {
                         product_id: result[0].product_id,
                         name: result[0].name,
                         price: result[0].price,
+                        product_image: result[0].product_image,
                         request: {
                             type: 'GET',
                             description: 'Retorna todos os produtos',
