@@ -30,7 +30,7 @@ exports.gerOrders = (req, res, next) => {
                             request: {
                                 type: 'GET',
                                 description: 'Retorna os detalhes do pedido',
-                                url: 'http://localhost:3000/orders/' + order.order_id
+                                url: process.env.URL_API + 'orders/' + order.order_id
                             }
                         }
                     })
@@ -66,7 +66,7 @@ exports.postOrder = (req, res, next) => {
                                 request: {
                                     type: 'GET',
                                     description: 'Retorna todos os pedidos',
-                                    url: 'http://localhost:3000/orders/'
+                                    url: process.env.URL_API + 'orders/'
                                 }
                             }
                         }
@@ -100,7 +100,7 @@ exports.getOrderById = (req, res, next) => {
                         request: {
                             type: 'GET',
                             description: 'Retorna todos os pedidos',
-                            url: 'http://localhost:3000/orders/'
+                            url: process.env.URL_API + 'orders/'
                         }
                     }
                 }
@@ -123,7 +123,7 @@ exports.deleteOrder = (req, res, next) => {
                     request: {
                         type: 'POST',
                         description: 'Insere um pedido',
-                        url: 'http://localhost:3000/orders/',
+                        url: process.env.URL_API + 'orders/',
                         body: {
                             product_id: 'Number',
                             quantity: 'Number'
