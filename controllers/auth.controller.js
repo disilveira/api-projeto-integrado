@@ -1,10 +1,8 @@
-const express = require('express');
-const router = express.Router();
 const mysql = require('../config/mysql').pool;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-router.post('/signup', (req, res, next) => {
+exports.signup = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) }
 
@@ -35,9 +33,9 @@ router.post('/signup', (req, res, next) => {
             });
         })
     });
-});
+}
 
-router.post('/signin', (req, res, next) => {
+exports.signin = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if (error) { return res.status(500).send({ error: error }) }
         const query = `SELECT * FROM users WHERE email = ?`
@@ -56,12 +54,13 @@ router.post('/signin', (req, res, next) => {
                 if (result) {
                     const token = jwt.sign({
                         user_id: row[0].user_id,
+                        is_admin: row[0].is_admin,
                         email: row[0].email
                     },
-                    process.env.JWT_KEY,
-                    {
-                        expiresIn: "8h"
-                    });
+                        process.env.JWT_KEY,
+                        {
+                            expiresIn: "8h"
+                        });
                     return res.status(200).send({
                         message: 'Authenticated!',
                         token: token
@@ -74,6 +73,4 @@ router.post('/signin', (req, res, next) => {
 
         });
     });
-});
-
-module.exports = router;
+}

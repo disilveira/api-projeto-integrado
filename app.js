@@ -4,7 +4,7 @@ const morgan = require('morgan');
 
 const productsRoute = require('./routes/products.routes');
 const ordersRoute = require('./routes/orders.routes');
-const usersRoute = require('./routes/users.routes');
+const authRoute = require('./routes/auth.routes');
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 app.use('/products', productsRoute);
 app.use('/orders', ordersRoute);
-app.use('/users', usersRoute);
+app.use('/auth', authRoute);
 
 app.use((req, res, next) => {
     const erro = new Error('404 Route Not Found!');
