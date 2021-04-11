@@ -145,8 +145,8 @@ exports.requestPasswordReset = async (req, res, next) => {
         );
 
         const response = {
+            success: true,
             message: "E-mail sent!",
-            link: link
         }
         res.status(201).send(response);
     } catch (error) {
