@@ -59,4 +59,10 @@ router.patch(
     usersController.insertProfileImage
 );
 
+router.get(
+    '/:user_id/image',
+    verifyLogin,
+    usersController.getUserProfileImage
+);
+
 module.exports = router;

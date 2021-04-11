@@ -104,3 +104,21 @@ exports.insertProfileImage = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 };
+
+exports.getUserProfileImage = async (req, res, next) => {
+    try {
+        let result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.params.user_id]);
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'User ID not found!' })
+        }
+        result = await mysql.execute("SELECT profile_image FROM users WHERE user_id = ?", [req.params.user_id]);
+        const response = {
+            image: {
+                url: process.env.URL_API + 'uploads/profile/' + result[0].profile_image,
+            }
+        }
+        res.status(201).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
