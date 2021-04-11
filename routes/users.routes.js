@@ -11,4 +11,11 @@ router.get(
     usersController.getUsers
 );
 
+router.get(
+    '/:user_id',
+    verifyLogin,
+    isAdmin,
+    usersController.getUserById
+);
+
 module.exports = router;
