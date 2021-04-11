@@ -67,3 +67,19 @@ exports.updateUser = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 };
+
+exports.deleteUser = async (req, res, next) => {
+    try {
+        let result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.body.user_id]);
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'User ID not found!' })
+        }
+        await mysql.execute("DELETE FROM users WHERE user_id = ?", [req.body.user_id]);
+        const response = {
+            message: 'User deleted!',
+        }
+        res.status(202).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};

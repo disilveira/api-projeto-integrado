@@ -20,7 +20,16 @@ router.get(
 
 router.patch(
     '/',
+    verifyLogin,
+    isAdmin,
     usersController.updateUser
+);
+
+router.delete(
+    '/',
+    verifyLogin,
+    isAdmin,
+    usersController.deleteUser
 );
 
 module.exports = router;
