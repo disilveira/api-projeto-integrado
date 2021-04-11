@@ -1,4 +1,5 @@
 const mysql = require('../config/mysql');
+const bcrypt = require('bcrypt');
 
 exports.getUsers = async (req, res, next) => {
     try {
@@ -41,6 +42,27 @@ exports.getUserById = async (req, res, next) => {
             }
         }
         return res.status(200).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
+
+exports.updateUser = async (req, res, next) => {
+    try {
+        let result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.body.user_id]);
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'User ID not found!' })
+        }
+        result = await mysql.execute("SELECT * FROM users WHERE email = ? AND user_id != ?", [req.body.email, req.body.user_id]);
+        if (result.length > 0) {
+            return res.status(409).send({ message: 'This email is already being used by another user.' })
+        }
+        result = await mysql.execute("UPDATE users SET name = ?, email = ?, is_admin = ?, is_active = ? WHERE user_id = ?", [req.body.name, req.body.email, req.body.is_admin, req.body.is_active, req.body.user_id]);
+        const response = {
+            message: 'User updated!'
+        }
+        return res.status(201).send(response);
+
     } catch (error) {
         return res.status(500).send({ error: error });
     }

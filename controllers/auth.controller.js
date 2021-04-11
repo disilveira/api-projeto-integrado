@@ -28,7 +28,7 @@ exports.signup = async (req, res, next) => {
 
 exports.signin = async (req, res, next) => {
     try {
-        const response = await mysql.execute("SELECT * FROM users WHERE email = ?", [req.body.email]);
+        const response = await mysql.execute("SELECT * FROM users WHERE email = ? AND is_active = 1", [req.body.email]);
         if (response.length == 0) {
             return res.status(401).send({ message: 'Unauthorized!' })
         }
