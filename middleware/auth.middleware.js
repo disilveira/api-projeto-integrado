@@ -7,7 +7,7 @@ const verifyLogin = (req, res, next) => {
         req.usuario = decode;
         next();
     } catch (error) {
-        return res.status(401).send({ message: 'Authentication failure' });
+        return res.status(401).send({ message: 'Unauthorized!' });
     }
 }
 
