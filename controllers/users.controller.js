@@ -1,5 +1,6 @@
 const mysql = require('../config/mysql');
 const sendEmail = require('../utils/email/sendEmail');
+const dateFormat = require('dateformat');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 
@@ -134,19 +135,23 @@ exports.requestPasswordReset = async (req, res, next) => {
         }
         let resetToken = crypto.randomBytes(32).toString("hex");
         const tokenHash = await bcrypt.hash(resetToken, 10);
-        await mysql.execute("UPDATE users SET token = ? WHERE user_id = ?", [tokenHash, result[0].user_id]);
+        const dt = new Date();
+        let tokenValidity = dt.setHours(dt.getHours() + 1);
+        tokenValidity = dateFormat(tokenValidity, "yyyy-mm-dd HH:MM:ss")
+        await mysql.execute("UPDATE users SET token = ?, token_validity = ? WHERE user_id = ?", [tokenHash, tokenValidity, result[0].user_id]);
 
         const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
 
         await sendEmail(
             result[0].email,
             "Password Reset Request",
-            `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}`
+            `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}\n\nEste link estará disponível somente por 1 hora após a solicitação de recuperação de senha`
         );
 
         const response = {
             success: true,
             message: "E-mail sent!",
+            token_validity: tokenValidity
         }
         res.status(201).send(response);
     } catch (error) {
