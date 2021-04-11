@@ -11,6 +11,7 @@ exports.getUsers = async (req, res, next) => {
                     user_id: user.user_id,
                     name: user.name,
                     email: user.email,
+                    profile_image: result[0].profile_image,
                     is_active: user.is_active,
                     is_admin: user.is_admin,
                     createdAt: user.created_at,
@@ -35,6 +36,7 @@ exports.getUserById = async (req, res, next) => {
                 user_id: result[0].user_id,
                 name: result[0].name,
                 email: result[0].email,
+                profile_image: result[0].profile_image,
                 is_active: result[0].is_active,
                 is_admin: result[0].is_admin,
                 createdAt: result[0].created_at,
@@ -70,7 +72,7 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        let result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.body.user_id]);
+        const result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.body.user_id]);
         if (result.length == 0) {
             return res.status(404).send({ message: 'User ID not found!' })
         }
@@ -79,6 +81,25 @@ exports.deleteUser = async (req, res, next) => {
             message: 'User deleted!',
         }
         res.status(202).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
+
+exports.insertProfileImage = async (req, res, next) => {
+    try {
+        const result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.params.user_id]);
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'User ID not found!' })
+        }
+        await mysql.execute("UPDATE users SET profile_image = ? WHERE user_id = ?", [req.file.filename, req.params.user_id]);
+        const response = {
+            message: 'Profile image inserted!',
+            image: {
+                url: process.env.URL_API + 'uploads/profile/' + req.file.filename,
+            }
+        }
+        res.status(201).send(response);
     } catch (error) {
         return res.status(500).send({ error: error });
     }
