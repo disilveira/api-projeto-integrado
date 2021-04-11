@@ -65,4 +65,13 @@ router.get(
     usersController.getUserProfileImage
 );
 
+router.post(
+    '/forgotPassword',
+    usersController.requestPasswordReset
+)
+
+router.post(
+    '/passwordReset'
+)
+
 module.exports = router;

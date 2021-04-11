@@ -1,4 +1,6 @@
 const mysql = require('../config/mysql');
+const sendEmail = require('../utils/email/sendEmail');
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 
 exports.getUsers = async (req, res, next) => {
@@ -121,5 +123,33 @@ exports.getUserProfileImage = async (req, res, next) => {
         res.status(201).send(response);
     } catch (error) {
         return res.status(500).send({ error: error });
+    }
+};
+
+exports.requestPasswordReset = async (req, res, next) => {
+    try {
+        const result = await mysql.execute("SELECT * FROM users WHERE email = ?", [req.body.email]);
+        if (result.length == 0) {
+            return res.status(404).send({ message: 'E-mail not found!' })
+        }
+        let resetToken = crypto.randomBytes(32).toString("hex");
+        const tokenHash = await bcrypt.hash(resetToken, 10);
+        await mysql.execute("UPDATE users SET token = ? WHERE user_id = ?", [tokenHash, result[0].user_id]);
+
+        const link = `${process.env.URL_API}users/passwordReset?token=${resetToken}&id=${result[0].user_id}`;
+
+        await sendEmail(
+            result[0].email,
+            "Password Reset Request",
+            `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}`
+        );
+
+        const response = {
+            message: "E-mail sent!",
+            link: link
+        }
+        res.status(201).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
     }
 };
