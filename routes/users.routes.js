@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-const verifyLogin = require('../middleware/auth.middleware');
+const { verifyLogin, isAdmin } = require('../middleware/auth.middleware');
 const usersController = require('../controllers/users.controller');
 
 router.get(
     '/',
     verifyLogin,
+    isAdmin,
     usersController.getUsers
 );
 
