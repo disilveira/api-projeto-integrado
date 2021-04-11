@@ -24,24 +24,45 @@ const upload = multer({
     }
 });
 
-router.get('/', productsController.getProducts);
+router.get(
+    '/', 
+    productsController.getProducts
+);
 
-router.post('/', 
+router.post(
+    '/', 
     verifyLogin, 
     upload.single('product_image'), 
     productsController.postProduct
 );
 
-router.get('/:product_id', productsController.getProductById);
+router.get(
+    '/:product_id', 
+    productsController.getProductById
+);
 
-router.patch('/', 
+router.patch(
+    '/', 
     verifyLogin, 
     productsController.updateProduct
 );
 
-router.delete('/', 
+router.delete(
+    '/', 
     verifyLogin, 
     productsController.deleteProduct
+);
+
+router.post(
+    '/:product_id/image',
+    verifyLogin,
+    upload.single('product_image'),
+    productsController.postImage
+);
+
+router.get(
+    '/:product_id/images',
+    productsController.getImages
 );
 
 module.exports = router;

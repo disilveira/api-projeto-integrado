@@ -2,7 +2,19 @@ const mysql = require('../config/mysql');
 
 exports.getProducts = async (req, res, next) => {
     try {
-        const result = await mysql.execute("SELECT * FROM products");
+        
+        let queryParam = '';
+        if(req.query.categoryId){
+            queryParam = 'WHERE categoryId = ?';
+        }
+
+        const query = `
+            SELECT * 
+                FROM products
+                ${queryParam}
+            ;
+        `
+        const result = await mysql.execute(query, [req.query.categoryId]);
         const response = {
             rows: result.length,
             products: result.map(prod => {
@@ -115,3 +127,50 @@ exports.deleteProduct = async (req, res, next) => {
         return res.status(500).send({ error: error });
     }
 }
+
+exports.postImage = async (req, res, next) => {
+    try {
+        const result = await mysql.execute("INSERT INTO products_images (product_id, image_name) VALUES (?, ?)", [req.params.product_id, req.file.filename]);
+        const response = {
+            message: 'Image inserted!',
+            image: {
+                image_id: result.insertId,
+                product_id: req.params.product_id,
+                image_name: req.file.filename,
+                request: {
+                    type: 'GET',
+                    description: 'Retorna todas as imagens',
+                    url: process.env.URL_API + 'products/' + req.params.product_id + '/images'
+                }
+            }
+        }
+        res.status(201).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+}
+
+exports.getImages = async (req, res, next) => {
+    try {
+        const result = await mysql.execute("SELECT * FROM products_images WHERE product_id = ?", [req.params.product_id]);
+        const response = {
+            rows: result.length,
+            images: result.map(imgs => {
+                return {
+                    image_id: imgs.image_id,
+                    product_id: imgs.product_id,
+                    image_name: imgs.image_name,
+                    // product_image: prod.product_image,
+                    // request: {
+                    //     type: 'GET',
+                    //     description: 'Retorna os detalhes do produto',
+                    //     url: process.env.URL_API + 'products/' + prod.product_id
+                    // }
+                }
+            })
+        }
+        return res.status(200).send(response);
+    } catch (error) {
+        return res.status(500).send({ error: error });
+    }
+};
