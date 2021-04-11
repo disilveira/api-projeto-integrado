@@ -136,7 +136,7 @@ exports.requestPasswordReset = async (req, res, next) => {
         const tokenHash = await bcrypt.hash(resetToken, 10);
         await mysql.execute("UPDATE users SET token = ? WHERE user_id = ?", [tokenHash, result[0].user_id]);
 
-        const link = `${process.env.URL_API}users/passwordReset?token=${resetToken}&id=${result[0].user_id}`;
+        const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
 
         await sendEmail(
             result[0].email,
