@@ -114,6 +114,7 @@ exports.getUserProfileImage = async (req, res, next) => {
         result = await mysql.execute("SELECT profile_image FROM users WHERE user_id = ?", [req.params.user_id]);
         const response = {
             image: {
+                name: result[0].profile_image,
                 url: process.env.URL_API + 'uploads/profile/' + result[0].profile_image,
             }
         }
