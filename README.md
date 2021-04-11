@@ -12,8 +12,9 @@ O link abaixo possui toda a documentação atualizada para utilização da API
 https://documenter.getpostman.com/view/12921403/Tz5wXuYJ
 
 **Link da API**
+----
 
-Link para utilização da API
+Link para utilização da API:
 
 https://api-projeto-integrado.herokuapp.com/
 
