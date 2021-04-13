@@ -5,8 +5,8 @@ const sendEmail = async (email, subject, text) => {
 
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
-            port: 587,
-            secure: false,
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USERNAME,
                 pass: process.env.EMAIL_PASSWORD
@@ -14,7 +14,7 @@ const sendEmail = async (email, subject, text) => {
         });
 
         const mailOptions = {
-            from: process.env.FROM_EMAIL,
+            from: `Projeto Integrado - PUC Minas <${process.env.FROM_EMAIL}>`,
             to: email,
             subject: subject,
             text: text
@@ -22,9 +22,9 @@ const sendEmail = async (email, subject, text) => {
 
         transporter.sendMail(mailOptions, (err, info) => {
             if (err) {
-                return console.log(err)
+                console.log(err);
             }
-            console.log(info)
+            console.log(info);
         })
 
 

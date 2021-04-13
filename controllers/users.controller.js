@@ -142,6 +142,7 @@ exports.requestPasswordReset = async (req, res, next) => {
 
         const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
 
+
         await sendEmail(
             result[0].email,
             "Password Reset Request",
@@ -155,6 +156,6 @@ exports.requestPasswordReset = async (req, res, next) => {
         }
         res.status(201).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error.message });
+        return res.status(500).send({ error: error });
     }
 };
