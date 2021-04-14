@@ -24,7 +24,7 @@ exports.getUsers = async (req, res, next) => {
         }
         return res.status(200).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -48,7 +48,7 @@ exports.getUserById = async (req, res, next) => {
         }
         return res.status(200).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -69,7 +69,7 @@ exports.updateUser = async (req, res, next) => {
         return res.status(201).send(response);
 
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -85,7 +85,7 @@ exports.deleteUser = async (req, res, next) => {
         }
         res.status(202).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -104,7 +104,7 @@ exports.insertProfileImage = async (req, res, next) => {
         }
         res.status(201).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -123,7 +123,7 @@ exports.getUserProfileImage = async (req, res, next) => {
         }
         res.status(201).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 };
 
@@ -142,7 +142,6 @@ exports.requestPasswordReset = async (req, res, next) => {
 
         const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
 
-
         await sendEmail(
             result[0].email,
             "Password Reset Request",
@@ -156,6 +155,54 @@ exports.requestPasswordReset = async (req, res, next) => {
         }
         res.status(201).send(response);
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
+    }
+};
+
+exports.passwordReset = async (req, res, next) => {
+    try {
+        const data = await mysql.execute("SELECT * FROM users WHERE email = ? AND user_id = ?", [req.body.email, req.query.id]);
+        if (data.length == 0) {
+            return res.status(404).send({ success: false, message: 'User not found!' });
+        }
+
+        bcrypt.compare(req.query.token, data[0].token, async (error, result) => {
+
+            if (error) {
+                return res.status(401).send({ success: false, message: error.message });
+            }
+
+            if(new Date().getTime() > new Date(data[0].token_validity).getTime()){
+                return res.status(401).send({ success: false, message: "Token expired!" });
+            }
+
+            if (result) {
+
+                bcrypt.hash(req.body.password, 10, async (errorBcrypt, hash) => {
+                    if (errorBcrypt) { return res.status(500).send({ error: errorBcrypt }) }
+                    const atualDate = new Date();
+                    await mysql.execute("UPDATE users SET password = ?, token = 0, token_validity = ? WHERE user_id = ? AND email = ?", [hash, atualDate, data[0].user_id, data[0].email]);
+
+                    await sendEmail(
+                        data[0].email,
+                        "Password Changed",
+                        `Olá, ${data[0].name}\n\nInformamos que sua senha foi alterada com sucesso!`
+                    );
+
+                    const response = {
+                        success: true,
+                        message: "Password changed!"
+                    }
+                    return res.status(200).send(response);
+                });
+
+            } else {
+                return res.status(401).send({ success: false, message: 'Inválid Token!' });
+            }
+
+        });
+
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
     }
 };

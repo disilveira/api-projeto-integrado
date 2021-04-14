@@ -22,7 +22,7 @@ exports.signup = async (req, res, next) => {
             return res.status(201).send(response)
         });
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 }
 
@@ -57,6 +57,6 @@ exports.signin = async (req, res, next) => {
 
         });
     } catch (error) {
-        return res.status(500).send({ error: error });
+        return res.status(500).send({ error: error.message });
     }
 }
