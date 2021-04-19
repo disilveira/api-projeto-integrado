@@ -142,17 +142,27 @@ exports.requestPasswordReset = async (req, res, next) => {
 
         const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
 
-        await sendEmail(
-            result[0].email,
-            "Password Reset Request",
-            `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}\n\nEste link estará disponível somente por 1 hora após a solicitação de recuperação de senha`
-        );
+        let response = {};
 
-        const response = {
-            success: true,
-            message: "E-mail sent!",
-            token_validity: tokenValidity
+        try {
+            let emailResult = await sendEmail(
+                result[0].email,
+                "Password Reset Request",
+                `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}\n\nEste link estará disponível somente por 1 hora após a solicitação de recuperação de senha`
+            );
+            response = {
+                success: true,
+                response: emailResult.response,
+                messageId: emailResult.messageId,
+                token_validity: tokenValidity
+            }
+        } catch (error) {
+            response = {
+                success: false,
+                error: error.message
+            }
         }
+    
         res.status(201).send(response);
     } catch (error) {
         return res.status(500).send({ error: error.message });
