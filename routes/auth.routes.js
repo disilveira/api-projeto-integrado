@@ -12,4 +12,9 @@ router.post('/signup',
 
 router.post('/signin', authController.signin);
 
+router.get('/load-session', 
+    verifyLogin, 
+    authController.loadSession
+);
+
 module.exports = router;

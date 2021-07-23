@@ -40,8 +40,10 @@ exports.signin = async (req, res, next) => {
             if (result) {
                 const token = jwt.sign({
                     user_id: response[0].user_id,
+                    user_name: response[0].name,
+                    email: response[0].email,
                     is_admin: response[0].is_admin,
-                    email: response[0].email
+                    is_active: response[0].is_active
                 },
                     process.env.JWT_KEY,
                     {
@@ -66,4 +68,21 @@ exports.signin = async (req, res, next) => {
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
+}
+
+exports.loadSession = async (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1]
+
+    jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+        if (err) {
+            res.status(401).send({ message: 'A sessão está inválida ou expirada' })
+            return
+        }
+
+        res.status(200).send({
+            token,
+            user: decoded
+        })
+
+    })
 }
