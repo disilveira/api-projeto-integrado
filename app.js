@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
@@ -5,6 +6,7 @@ const morgan = require('morgan');
 const authRoute = require('./routes/auth.routes');
 const usersRoute = require('./routes/users.routes');
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: true }));
