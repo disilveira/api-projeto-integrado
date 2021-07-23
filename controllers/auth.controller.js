@@ -53,7 +53,9 @@ exports.signin = async (req, res, next) => {
                     user: {
                         user_id: response[0].user_id,
                         user_name: response[0].name,
-                        email: response[0].email
+                        email: response[0].email,
+                        is_admin: response[0].is_admin,
+                        is_active: response[0].is_active
                     }
                 });
             }
