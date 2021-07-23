@@ -49,10 +49,12 @@ exports.signin = async (req, res, next) => {
                     });
                 return res.status(200).send({
                     message: 'Authenticated!',
-                    user_id: response[0].user_id,
-                    email: response[0].email,
-                    user_name: response[0].name,
-                    token: token
+                    token: token,
+                    user: {
+                        user_id: response[0].user_id,
+                        user_name: response[0].name,
+                        email: response[0].email
+                    }
                 });
             }
 
