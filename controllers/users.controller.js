@@ -7,22 +7,7 @@ const bcrypt = require('bcrypt');
 exports.getUsers = async (req, res, next) => {
     try {
         const result = await mysql.execute("SELECT * FROM users");
-        const response = {
-            rows: result.length,
-            users: result.map(user => {
-                return {
-                    user_id: user.user_id,
-                    name: user.name,
-                    email: user.email,
-                    profile_image: result[0].profile_image,
-                    is_active: user.is_active,
-                    is_admin: user.is_admin,
-                    createdAt: user.created_at,
-                    updatedAt: user.updated_at
-                }
-            })
-        }
-        return res.status(200).send(response);
+        return res.status(200).send(result);
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
@@ -34,19 +19,7 @@ exports.getUserById = async (req, res, next) => {
         if (result.length == 0) {
             return res.status(404).send({ message: 'User ID not found!' });
         }
-        const response = {
-            user: {
-                user_id: result[0].user_id,
-                name: result[0].name,
-                email: result[0].email,
-                profile_image: result[0].profile_image,
-                is_active: result[0].is_active,
-                is_admin: result[0].is_admin,
-                createdAt: result[0].created_at,
-                updatedAt: result[0].updated_at
-            }
-        }
-        return res.status(200).send(response);
+        return res.status(200).send(result);
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
@@ -115,13 +88,7 @@ exports.getUserProfileImage = async (req, res, next) => {
             return res.status(404).send({ message: 'User ID not found!' })
         }
         result = await mysql.execute("SELECT profile_image FROM users WHERE user_id = ?", [req.params.user_id]);
-        const response = {
-            image: {
-                name: result[0].profile_image,
-                url: process.env.URL_API + 'uploads/profile/' + result[0].profile_image,
-            }
-        }
-        res.status(201).send(response);
+        res.status(201).send(result);
     } catch (error) {
         return res.status(500).send({ error: error.message });
     }
