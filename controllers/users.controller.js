@@ -48,11 +48,11 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
     try {
-        const result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.body.user_id]);
+        const result = await mysql.execute("SELECT * FROM users WHERE user_id = ?", [req.params.user_id]);
         if (result.length == 0) {
             return res.status(404).send({ message: 'User ID not found!' })
         }
-        await mysql.execute("DELETE FROM users WHERE user_id = ?", [req.body.user_id]);
+        await mysql.execute("DELETE FROM users WHERE user_id = ?", [req.params.user_id]);
         const response = {
             message: 'User deleted!',
         }

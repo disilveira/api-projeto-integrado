@@ -46,7 +46,7 @@ router.patch(
 );
 
 router.delete(
-    '/',
+    '/:user_id',
     verifyLogin,
     isAdmin,
     usersController.deleteUser
