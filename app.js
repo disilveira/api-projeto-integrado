@@ -5,6 +5,7 @@ const morgan = require('morgan');
 
 const authRoute = require('./routes/auth.routes');
 const usersRoute = require('./routes/users.routes');
+const tripsRoute = require('./routes/trips.routes')
 
 app.use(cors());
 app.use(morgan('dev'));
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoute);
 app.use('/users', usersRoute);
+app.use('/trips', tripsRoute)
 
 app.use((req, res, next) => {
     const erro = new Error('404 Route Not Found!');
