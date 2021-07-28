@@ -107,7 +107,7 @@ exports.requestPasswordReset = async (req, res, next) => {
         tokenValidity = dateFormat(tokenValidity, "yyyy-mm-dd HH:MM:ss")
         await mysql.execute("UPDATE users SET token = ?, token_validity = ? WHERE user_id = ?", [tokenHash, tokenValidity, result[0].user_id]);
 
-        const link = `${process.env.URL_API}users/passwordReset/?token=${resetToken}&id=${result[0].user_id}`;
+        const link = `https://frontend-projeto-integrado.herokuapp.com/#/change-password/?token=${resetToken}&id=${result[0].user_id}`;
 
         let response = {};
 
