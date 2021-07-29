@@ -6,7 +6,6 @@ const tripsController = require('../controllers/trips.controller');
 
 router.get(
     '/',
-    verifyLogin,
     tripsController.getTripsData
 );
 
@@ -18,7 +17,6 @@ router.get(
 
 router.get(
     '/vehicles-numbers',
-    verifyLogin,
     tripsController.getVehicleTopNumbers
 );
 

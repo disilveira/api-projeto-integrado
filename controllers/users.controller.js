@@ -115,7 +115,7 @@ exports.requestPasswordReset = async (req, res, next) => {
             let emailResult = await sendEmail(
                 result[0].email,
                 "Password Reset Request",
-                `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}\n\nEste link estará disponível somente por 1 hora após a solicitação de recuperação de senha`
+                `Olá, ${result[0].name}\n\nClique no link abaixo para alterar sua senha\n\nLink: ${link}\n\nEste link estará disponível somente por 1 hora após a solicitação de recuperação de senha\n\n`
             );
             response = {
                 success: true,
@@ -163,7 +163,7 @@ exports.passwordReset = async (req, res, next) => {
                     await sendEmail(
                         data[0].email,
                         "Password Changed",
-                        `Olá, ${data[0].name}\n\nInformamos que sua senha foi alterada com sucesso!`
+                        `Olá, ${data[0].name}\n\nInformamos que sua senha foi alterada com sucesso!\n\n`
                     );
 
                     const response = {
